@@ -101,10 +101,10 @@ public class RocketmqAutoConfiguration{
             DefaultMQPushConsumer consumer = container.getConsumer();
             switch (container.getConsumeMode()) {
                 case ORDERLY:
-                    consumer.setMessageListener((new TraceableContainerMessageListenerOrderly(container,tracing)));
+                    consumer.setMessageListener(new TraceableContainerMessageListenerOrderly(container,tracing));
                     break;
                 case CONCURRENTLY:
-                    consumer.setMessageListener((new TraceableContainerMessageListenerConcurrently(container,tracing)));
+                    consumer.setMessageListener(new TraceableContainerMessageListenerConcurrently(container,tracing));
                     break;
                 default:
                     throw new IllegalArgumentException("Property 'consumeMode' was wrong.");

@@ -1,8 +1,6 @@
 package com.wenky.log.trace.web;
 
 import com.wenky.log.trace.Tracing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 
 import javax.servlet.*;
@@ -13,8 +11,6 @@ import java.io.IOException;
  * @date 2021/6/27
  */
 public class LazyTracingFilter implements Filter {
-
-    private static final Logger log = LoggerFactory.getLogger(LazyTracingFilter.class);
 
     private final BeanFactory beanFactory;
 
@@ -28,11 +24,9 @@ public class LazyTracingFilter implements Filter {
         Filter filter = getFilter();
         if (filter != null){
             filter.doFilter(servletRequest, servletResponse, filterChain);
-            log.info("do filter:{}",servletRequest.getRemoteHost());
             return;
         }
         filterChain.doFilter(servletRequest, servletResponse);
-        log.info("do filter:{}",servletRequest.getRemoteHost());
     }
 
     private Filter getFilter(){
