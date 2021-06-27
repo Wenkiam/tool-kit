@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wenky.log.trace.spring.LogTraceAutoConfiguration
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.wenky.log.trace.spring.TraceEnvironmentPostProcessor  

@@ -1,0 +1,5 @@
+# Project exclude paths
+/config-center/config-service/target/
+/examples/target/
+/log-trace/log-trace-core/target/
+/log-trace/log-trace-instrument-web/target/

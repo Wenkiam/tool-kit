@@ -1,0 +1,4 @@
+## log trace
+log trace 用于传递traceId和自定义的field，通过在日志里面打印traceId方便追踪问题。
+这个工具包的实现思想参考了zipkin的brave，去掉了span相关的概念和操作，
+只保留了对traceId和extra field的传递，相比完整的zipkin brave轻量化了很多，适合简单的日志追踪

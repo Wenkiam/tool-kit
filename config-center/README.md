@@ -1,0 +1,3 @@
+## config center
+
+配置中心的门面工具包，通过实现ConfigService接口适配不同的配置中心，通过ConfigManager类方便地从配置中心获取配置
