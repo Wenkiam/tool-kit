@@ -121,11 +121,8 @@ public abstract class Tracing implements Closeable {
             return;
         }
         Tracer tracer = tracing.tracer();
-        ContextScope scope = tracer.newScope();
-        try {
+        try (TraceScope ignored = tracer.newScope()) {
             runnable.run();
-        }finally {
-            scope.finish();
         }
     }
 
@@ -135,11 +132,8 @@ public abstract class Tracing implements Closeable {
             return callable.call();
         }
         Tracer tracer = tracing.tracer();
-        ContextScope scope = tracer.newScope();
-        try {
+        try (TraceScope ignored = tracer.newScope()) {
             return callable.call();
-        } finally {
-            scope.finish();
         }
     }
 

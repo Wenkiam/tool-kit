@@ -1,6 +1,6 @@
 package com.wenky.log.trace.web;
 
-import com.wenky.log.trace.ContextScope;
+import com.wenky.log.trace.TraceScope;
 import com.wenky.log.trace.Tracer;
 import com.wenky.log.trace.Tracing;
 import com.wenky.log.trace.propagation.Propagation;
@@ -30,11 +30,8 @@ public class LogTraceFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         TraceContext context = extractor.extract(request);
-        ContextScope scope = tracer.newScope(context);
-        try {
+        try (TraceScope ignored = tracer.newScope(context)) {
             filterChain.doFilter(servletRequest, servletResponse);
-        } finally {
-            scope.finish();
         }
     }
 

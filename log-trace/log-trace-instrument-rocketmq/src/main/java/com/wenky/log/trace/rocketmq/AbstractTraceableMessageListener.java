@@ -1,7 +1,7 @@
 package com.wenky.log.trace.rocketmq;
 
 
-import com.wenky.log.trace.ContextScope;
+import com.wenky.log.trace.TraceScope;
 import com.wenky.log.trace.Tracer;
 import com.wenky.log.trace.Tracing;
 import com.wenky.log.trace.propagation.TraceContext;
@@ -30,7 +30,7 @@ public abstract class AbstractTraceableMessageListener {
         extractor = tracing.propagation().extractor(MessageExt::getUserProperty);
     }
 
-    ContextScope createScope(MessageExt messageExt){
+    TraceScope createScope(MessageExt messageExt){
         TraceContext extracted = extractor.extract(messageExt);
         return tracer.newScope(extracted);
     }
@@ -40,11 +40,11 @@ public abstract class AbstractTraceableMessageListener {
             return resultMapper.apply(delegate);
         }
         MessageExt messageExt = msgs.get(0);
-        ContextScope scope = createScope(messageExt);
+        TraceScope scope = createScope(messageExt);
         try{
             return resultMapper.apply(delegate);
         }finally {
-            scope.finish();
+            scope.close();
         }
     }
 

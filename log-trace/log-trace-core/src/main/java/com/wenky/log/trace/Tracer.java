@@ -5,8 +5,6 @@ import com.wenky.log.trace.propagation.CurrentTraceContext;
 import com.wenky.log.trace.propagation.Propagation;
 import com.wenky.log.trace.propagation.TraceContext;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,27 +22,27 @@ public class Tracer {
         this.propagationFactory = propagationFactory;
     }
 
-    public ContextScope newScope(){
+    public TraceScope newScope(){
         TraceContext context = currentTraceContext.get();
         if (context == null){
             context = propagationFactory.decorate(new TraceContext(nextId()));
         }
         CurrentTraceContext.Scope scope = currentTraceContext.newScope(context);
-        return new ContextScope(context, scope);
+        return new TraceScope(context, scope);
     }
 
-    public ContextScope newScope(TraceContext context){
+    public TraceScope newScope(TraceContext context){
         CurrentTraceContext.Scope scope = currentTraceContext.newScope(context);
-        return new ContextScope(context, scope);
+        return new TraceScope(context, scope);
     }
 
-    public ContextScope newScope(Map<String, String> extra){
+    public TraceScope newScope(Map<String, String> extra){
         TraceContext context = currentTraceContext.get();
         if (context == null){
             context = propagationFactory.decorate(new TraceContext(nextId(), extra));
         }
         CurrentTraceContext.Scope scope = currentTraceContext.newScope(context);
-        return new ContextScope(context, scope);
+        return new TraceScope(context, scope);
     }
 
     long nextId() {

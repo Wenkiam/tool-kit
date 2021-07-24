@@ -1,6 +1,6 @@
 package com.wenky.log.trace.rocketmq;
 
-import com.wenky.log.trace.ContextScope;
+import com.wenky.log.trace.TraceScope;
 import com.wenky.log.trace.Tracer;
 import com.wenky.log.trace.Tracing;
 import com.wenky.log.trace.propagation.Propagation;
@@ -155,12 +155,12 @@ class LogTraceRocketmqAspect {
         if (messages.isEmpty()){
             return pjp.proceed();
         }
-        ContextScope scope = tracer.newScope();
+        TraceScope scope = tracer.newScope();
         messages.forEach(message -> injector.inject(scope.context(),message));
         try{
             return pjp.proceed();
         }finally {
-            scope.finish();
+            scope.close();
         }
 
     }

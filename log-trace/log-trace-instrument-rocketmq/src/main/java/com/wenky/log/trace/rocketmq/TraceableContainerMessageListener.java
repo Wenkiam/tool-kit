@@ -1,6 +1,6 @@
 package com.wenky.log.trace.rocketmq;
 
-import com.wenky.log.trace.ContextScope;
+import com.wenky.log.trace.TraceScope;
 import com.wenky.log.trace.Tracing;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.*;
@@ -61,7 +61,7 @@ class TraceableContainerMessageListener extends AbstractTraceableMessageListener
     }
     void handleMessage(MessageExt messageExt) throws Exception {
         log.debug("received msg: {}", messageExt);
-        ContextScope span = createScope(messageExt);
+        TraceScope span = createScope(messageExt);
         try {
             if (rocketMQListener != null) {
                 rocketMQListener.onMessage(doConvertMessage(messageExt));
@@ -87,7 +87,7 @@ class TraceableContainerMessageListener extends AbstractTraceableMessageListener
                 });
             }
         }finally {
-            span.finish();
+            span.close();
         }
     }
     private byte[] convertToBytes(Message<?> message) {
