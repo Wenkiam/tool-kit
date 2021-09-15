@@ -8,9 +8,13 @@ import com.wenky.config.ChangeListener;
  */
 public interface ConfigService {
 
-    String getValue(String configKey);
+    default String getValue(String configKey){
+        return getValue(configKey, null);
+    }
 
     String getValue(String configKey, String defaultValue);
 
-    void addChangeListener(String configKey, ChangeListener listener);
+    default void addChangeListener(String configKey, ChangeListener listener){
+
+    }
 }

@@ -5,6 +5,8 @@ import com.wenky.config.service.ConfigService;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -13,10 +15,10 @@ import java.util.LinkedList;
  */
 public class CompositeConfigService implements ConfigService {
 
-    public final Deque<ConfigService> configServices = new LinkedList<>();
+    public final List<ConfigService> configServices = new CopyOnWriteArrayList<>();
 
     @Override
-    public String getValue(String configKey) {
+    public String getValue(String configKey, String defaultValue) {
         String value;
         for (ConfigService configService : configServices){
             value = configService.getValue(configKey);
@@ -24,13 +26,7 @@ public class CompositeConfigService implements ConfigService {
                 return value;
             }
         }
-        return null;
-    }
-
-    @Override
-    public String getValue(String configKey, String defaultValue) {
-        String value;
-        return (value = getValue(configKey)) == null ? defaultValue : value;
+        return defaultValue;
     }
 
     @Override
@@ -38,11 +34,9 @@ public class CompositeConfigService implements ConfigService {
         configServices.forEach(configService -> configService.addChangeListener(configKey, listener));
     }
 
-    public void addFirst(ConfigService configService){
-        configServices.addFirst(configService);
-    }
-
-    public void addLast(ConfigService configService){
-        configServices.addLast(configService);
+    public void add(ConfigService configService){
+        if (!configServices.contains(configService)) {
+            configServices.add(configService);
+        }
     }
 }

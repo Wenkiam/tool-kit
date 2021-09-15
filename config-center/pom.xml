@@ -14,6 +14,9 @@
     <modules>
         <module>config-service</module>
         <module>apollo-adaptor</module>
+        <module>nacos-adaptor</module>
+        <module>nacos-spring-cloud-adptor</module>
+        <module>nacos-spring-boot-adptor</module>
     </modules>
 
     <properties>

@@ -53,4 +53,9 @@ public class Tracer {
         return nextId;
     }
 
+    public TraceContext getOrCreateContext() {
+        TraceContext current = currentTraceContext.get();
+        return current == null ? propagationFactory.decorate(new TraceContext(nextId())) : current;
+    }
+
 }

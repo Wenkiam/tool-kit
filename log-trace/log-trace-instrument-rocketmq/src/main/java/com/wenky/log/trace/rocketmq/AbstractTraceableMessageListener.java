@@ -40,11 +40,8 @@ public abstract class AbstractTraceableMessageListener {
             return resultMapper.apply(delegate);
         }
         MessageExt messageExt = msgs.get(0);
-        TraceScope scope = createScope(messageExt);
-        try{
+        try (TraceScope ignored = createScope(messageExt)) {
             return resultMapper.apply(delegate);
-        }finally {
-            scope.close();
         }
     }
 

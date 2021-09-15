@@ -61,8 +61,7 @@ class TraceableContainerMessageListener extends AbstractTraceableMessageListener
     }
     void handleMessage(MessageExt messageExt) throws Exception {
         log.debug("received msg: {}", messageExt);
-        TraceScope span = createScope(messageExt);
-        try {
+        try (TraceScope ignored = createScope(messageExt)) {
             if (rocketMQListener != null) {
                 rocketMQListener.onMessage(doConvertMessage(messageExt));
             } else if (rocketMQReplyListener != null) {
@@ -86,8 +85,6 @@ class TraceableContainerMessageListener extends AbstractTraceableMessageListener
                     }
                 });
             }
-        }finally {
-            span.close();
         }
     }
     private byte[] convertToBytes(Message<?> message) {
@@ -208,6 +205,11 @@ class TraceableContainerMessageListener extends AbstractTraceableMessageListener
             throw new RuntimeException("parameterType:" + messageType + " of onMessage method is not supported");
         }
     }
+    void consumeMessage(List<MessageExt> messageExtList) throws Exception {
+        for (MessageExt messageExt : messageExtList) {
+            handleMessage(messageExt);
+        }
+    }
 }
 
 class TraceableContainerMessageListenerConcurrently extends TraceableContainerMessageListener implements MessageListenerConcurrently {
@@ -218,12 +220,11 @@ class TraceableContainerMessageListenerConcurrently extends TraceableContainerMe
 
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-        for (MessageExt messageExt : msgs) {
-            try {
-                handleMessage(messageExt);
-            } catch (Exception e) {
-                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
-            }
+        try {
+            consumeMessage(msgs);
+        } catch (Exception e){
+            context.setDelayLevelWhenNextConsume(container.getDelayLevelWhenNextConsume());
+            return ConsumeConcurrentlyStatus.RECONSUME_LATER;
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
@@ -239,15 +240,12 @@ class TraceableContainerMessageListenerOrderly extends TraceableContainerMessage
 
     @Override
     public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {
-        for (MessageExt messageExt : msgs) {
-            try {
-                handleMessage(messageExt);
-            } catch (Exception e) {
-                context.setSuspendCurrentQueueTimeMillis(container.getSuspendCurrentQueueTimeMillis());
-                return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
-            }
+        try {
+            consumeMessage(msgs);
+        } catch (Exception e) {
+            context.setSuspendCurrentQueueTimeMillis(container.getSuspendCurrentQueueTimeMillis());
+            return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
         }
-
         return ConsumeOrderlyStatus.SUCCESS;
     }
 

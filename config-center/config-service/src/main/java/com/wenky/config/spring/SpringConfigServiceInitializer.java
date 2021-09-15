@@ -18,8 +18,6 @@ public class SpringConfigServiceInitializer implements ApplicationContextInitial
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        SpringConfigService configService = new SpringConfigService();
-        configService.setEnvironment(applicationContext.getEnvironment());
-        ConfigManager.addLast(configService);
+        ConfigManager.registerConfigService(applicationContext.getEnvironment()::getProperty);
     }
 }

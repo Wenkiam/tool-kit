@@ -110,6 +110,7 @@ public class ExtraFieldPropagation<K> implements Propagation<K>{
         @Override
         public void inject(TraceContext context, C1 carrier) {
             delegate.inject(context, carrier);
+            propagation.factory.extraFields.forEach(context::addExtraNX);
             context.extra().forEach((k,v)->{
                 setter.put(carrier,propagation.keyFactory.create(k), v);
             });
@@ -137,6 +138,7 @@ public class ExtraFieldPropagation<K> implements Propagation<K>{
 
         private void loadExtraKeys(ChangeEvent event){
             if (event.getType() == ChangeEvent.Type.DELETED){
+                extraFields.clear();
                 return;
             }
             setExtraFields(event.getNewValue());

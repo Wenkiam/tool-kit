@@ -1,7 +1,5 @@
 package com.wenky.log.trace.propagation;
 
-
-
 import com.wenky.log.trace.internal.Platform;
 
 import java.util.Collections;
@@ -16,7 +14,7 @@ import static com.wenky.log.trace.HexCodec.toLowerHex;
  * @author zhongwenjian
  * @date 2021/6/25
  */
-public class TraceContext {
+public class TraceContext implements Cloneable{
 
     private final long traceId;
 
@@ -63,11 +61,20 @@ public class TraceContext {
     public boolean remove(String key, String expected){
         return extra.remove(key, expected);
     }
-    Map<String, String> extra(){
+    public Map<String, String> extra(){
         return Collections.unmodifiableMap(extra);
+    }
+
+    public String getExtra(String key) {
+        return extra.get(key);
     }
     public Builder toBuilder(){
         return new Builder(this);
+    }
+
+    @Override
+    public TraceContext clone() {
+        return new TraceContext(traceId, extra);
     }
     public static class Builder {
 
@@ -147,12 +154,5 @@ public class TraceContext {
             }
         }
         return null;
-    }
-    public static void main(String[] args){
-        long traceId = newTraceId();
-        String traceIdStr = toLowerHex(traceId);
-        System.out.println(traceIdStr);
-        traceId = Builder.parseTraceId(traceIdStr);
-        System.out.println(traceId);
     }
 }

@@ -13,11 +13,7 @@ import java.util.Collections;
  */
 public class ApolloConfigService implements ConfigService {
 
-    private com.ctrip.framework.apollo.Config config = com.ctrip.framework.apollo.ConfigService.getAppConfig();
-    @Override
-    public String getValue(String configKey) {
-        return config.getProperty(configKey, null);
-    }
+    private final com.ctrip.framework.apollo.Config config = com.ctrip.framework.apollo.ConfigService.getAppConfig();
 
     @Override
     public String getValue(String configKey, String defaultValue) {
